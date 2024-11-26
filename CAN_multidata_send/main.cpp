@@ -2,8 +2,14 @@
 #include <Arduino.h>
 #include <CAN.h>
 #include "tuushin.h"  // tuushin.hをインクルード
+//Tougou
 
+int PS4_Circle=0;
+  int PS4_Triangle=0;
+  int PS4_R1=0;
+  int PS4_L1=0;
 
+  
 // setup関数: 初期設定を行う。CANバスの初期化と、送受信の設定を呼び出す
 void setup() {
   
@@ -38,10 +44,10 @@ const int CAN_RX_PIN = 26;  // 受信ピン（GPIO26）
 // loop関数: 受信と送信を繰り返す
 void loop() {
 
-  int PS4_Circle=0;
-  int PS4_Triangle=0;
-  int PS4_R1=0;
-  int PS4_L1=0;
+  PS4_Circle=0;
+  PS4_Triangle=0;
+  PS4_R1=0;
+  PS4_L1=0;
   
   //Serial.println("Start");
   // 受信処理を実行

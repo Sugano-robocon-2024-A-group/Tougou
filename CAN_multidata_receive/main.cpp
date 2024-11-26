@@ -4,8 +4,14 @@
 #include <CAN.h>
 #include "tuushin.h"  // tuushin.hをインクルード
 #include "PWM.h"//PWM関連は別ファイルにした
-
+//Tougou
 #include "souten.h" 
+
+uint32_t id;          // CAN IDを格納する変数
+uint16_t data[8]={0,0,0,0,0,0,0,0};      // 受信データを格納する配列（最大8バイト）
+uint16_t length=0;       // 受信データの長さを格納する変数
+
+
 // 目標電圧（ここに外部からの値が設定される）
 float targetVoltage = 3.5;      // 初期値として3.5Vを設定
 // 電圧範囲
@@ -54,26 +60,12 @@ soutenServo.write(20);  // 初期位置を20度（中央）に設定
 
 // loop関数: 受信と送信を繰り返す
 void loop() {
-
-uint32_t id;          // CAN IDを格納する変数
-uint16_t data[8]={0,0,0,0,0,0,0,0};      // 受信データを格納する配列（最大8バイト）
-uint16_t length=0;       // 受信データの長さを格納する変数
   
 receivePacket(id, data, length);
+// CANメッセージを受信
 
-  Serial.print("Received ID: ");
-  Serial.println(id);  // 10進数で表示
-
-  Serial.print("Received length ");
-  Serial.println(length);  // 10進数で表示
-
-  // CANメッセージを受信
-    for (int i = 0; i < length; i++) {
-      //Serial.print(data[i]);//⇒こっちで255って出てる
-     // Serial.print("A");
-    }
-    //Serial.println();
-
+int packetSize = CAN.parsePacket();
+if (packetSize) { 
     Serial.print(data[0]);
     Serial.print(data[1]);
     Serial.print(data[2]);
@@ -101,6 +93,10 @@ receivePacket(id, data, length);
         digitalWrite(PIN_SYASYUTU,LOW);
         Serial.print("LOW");
         }
-
+ 
+for (int i = 0; i < 8; i++) {
+    data[i] = 0;
+    }
+}
  //delay(1000);  // 1秒の遅延
 }

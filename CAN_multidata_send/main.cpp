@@ -80,7 +80,7 @@ void loop() {
   //sendPacket(PS4_Circle);
   sendPacket(PS4_Circle, PS4_Triangle, PS4_R1, PS4_L1);
 
-  delay(150);  // 1秒の遅延
+  delay(150);  // 0.15秒の遅延
 }
 
 /*

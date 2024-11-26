@@ -2,8 +2,16 @@
 #include <Arduino.h>
 #include <CAN.h>
 #include "tuushin.h"  // tuushin.hをインクルード
-//CAN通信確立成功
-//数字を読むことに成功
+#include "PWM.h"//PWM関連は別ファイルにした
+// 目標電圧（ここに外部からの値が設定される）
+float targetVoltage = 3.5;      // 初期値として3.5Vを設定
+// 電圧範囲
+const float maxVoltage = 5.0;   // 最大電圧
+const float minVoltage = 0.0;   // 最小電圧
+
+const int PIN_SYASYUTU = 5;  // 
+int dutyCycle = calculateDutyCycle(targetVoltage, maxVoltage, minVoltage);
+//Max=255とした計算
 
 // setup関数: 初期設定を行う。CANバスの初期化と、送受信の設定を呼び出す
 void setup() {
@@ -13,6 +21,8 @@ void setup() {
 
  const int CAN_TX_PIN = 27;  // 送信ピン（GPIO27）
 const int CAN_RX_PIN = 26;  // 受信ピン（GPIO26）
+
+pinMode(PIN_SYASYUTU,OUTPUT);
 
   Serial.println("CAN Communication");
 
@@ -66,55 +76,20 @@ receivePacket(id, data, length);
 
     Serial.println();
 
-    if(data[0]==0){
-      //これでHIGHにする
-      
-      }
+    if(data[0]==1){//これでHIGHにする
+        analogWrite(PIN_SYASYUTU, dutyCycle );
+        Serial.print("PWM");
+      }else{
+        digitalWrite(PIN_SYASYUTU,LOW);
+        Serial.print("LOW");
+        }
+    if(data[1]==1){//これでHIGHにする
+        analogWrite(PIN_SYASYUTU, dutyCycle );
+        Serial.print("Souten_servo_Control");
+      }else{
+        digitalWrite(PIN_SYASYUTU,LOW);
+        Serial.print("LOW");
+        }
 
  //delay(1000);  // 1秒の遅延
 }
-
-/*
-int PS4_Circle=0;
-
-void setup() {
-  Serial.begin(115200);
-  PS4.begin("1c:69:20:e6:20:d2");//ここにアドレス
-  Serial.println("Ready.");
-}
-
-void loop() {
-  // Below has all accessible outputs from the controller
-  if (PS4.isConnected()) {
-
-    if (PS4.Square()) {
-      Serial.println("Square Button");
-      
-    }
-    if (PS4.Cross()) Serial.println("Cross Button");
-    if (PS4.Circle()){
-      Serial.println("Circle Button");
-      PS4_Circle=1;
-      Serial.println("%d",PS4_Circle);
-    }
-    if (PS4.Triangle()) Serial.println("Triangle Button");
-
-    if (PS4.Charging()) Serial.println("The controller is charging");
-    if (PS4.Audio()) Serial.println("The controller has headphones attached");
-    if (PS4.Mic()) Serial.println("The controller has a mic attached");
-
-    Serial.printf("Battery Level : %d\n", PS4.Battery());
-
-    
-    
-    Serial.println();
-    // This delay is to make the output more human readable
-    // Remove it when you're not trying to see the output
-  }
-  
-//ここで
-
-  
-    delay(1000);
-  
-}*/

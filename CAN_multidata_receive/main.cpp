@@ -6,6 +6,7 @@
 #include "PWM.h"//PWM関連は別ファイルにした
 //Tougou
 #include "souten.h" 
+#include "gyoukaku.h"
 
 uint32_t id;          // CAN IDを格納する変数
 uint16_t data[8]={0,0,0,0,0,0,0,0};      // 受信データを格納する配列（最大8バイト）
@@ -25,6 +26,10 @@ int dutyCycle = calculateDutyCycle(targetVoltage, maxVoltage, minVoltage);
 extern Servo soutenServo; // 変数は外部で定義されていると宣言
 int souten_servoPin = 13;  // サーボの接続ピンを指定（適宜変更）
 
+Servo gyoukakuServo; // 変数は外部で定義されていると宣言
+int gyoukaku_servoPin = 12;  // 仰角用サーボの接続ピンを指定（適宜変更）
+//int currentAngle = 0;        // サーボの初期角度
+
 // setup関数: 初期設定を行う。CANバスの初期化と、送受信の設定を呼び出す
 void setup() {
   
@@ -39,6 +44,10 @@ pinMode(PIN_SYASYUTU,OUTPUT);
 //サーボピン初期設定
 soutenServo.attach(souten_servoPin);  // サーボピンを設定
 soutenServo.write(20);  // 初期位置を20度（中央）に設定
+
+//仰角用サーボピン初期設定
+gyoukakuServo.attach(gyoukaku_servoPin);  // サーボピンを設定
+gyoukakuServo.write(0);  // 初期位置を20度（中央）に設定
 
   Serial.println("CAN Communication");
   CAN.setPins(CAN_RX_PIN, CAN_TX_PIN);
@@ -93,6 +102,20 @@ if (packetSize) {
         digitalWrite(PIN_SYASYUTU,LOW);
         Serial.print("LOW");
         }
+    if(data[2]==1){//これでHIGHにする
+       Serial.println("仰角+1");
+      movegyoukakuServoBy(1); // 現在の角度から1度動かす (+1°)
+      delay(40);
+      }else{
+        }
+    if(data[3]==1){//これでHIGHにする
+       Serial.println("仰角-1");
+       movegyoukakuServoBy(-1);// 現在の角度から1度動かす (+1°)
+      delay(40);
+      
+      }else{
+        }
+     
  
 for (int i = 0; i < 8; i++) {
     data[i] = 0;
